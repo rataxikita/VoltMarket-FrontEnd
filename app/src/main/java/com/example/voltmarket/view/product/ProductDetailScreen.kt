@@ -168,7 +168,7 @@ fun ProductDetailContent(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "$${String.format("%.2f", product.precio)}",
+                text = product.precioFormateado(),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF6200EE)

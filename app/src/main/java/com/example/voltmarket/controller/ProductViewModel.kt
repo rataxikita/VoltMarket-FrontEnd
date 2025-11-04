@@ -56,6 +56,29 @@ class ProductViewModel(
         }
     }
 
+    fun searchProducts(query: String, categoryId: Long?) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            try {
+                val searchQuery = if (query.isBlank()) null else query
+                val products = apiService.getProducts(
+                    categoryId = categoryId,
+                    search = searchQuery,
+                    active = true
+                )
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    products = products
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Error de búsqueda: ${e.message}"
+                )
+            }
+        }
+    }
+
     fun loadCategories() {
         viewModelScope.launch {
             try {
@@ -112,18 +135,29 @@ class ProductViewModel(
 
     fun createProduct(request: ProductRequest) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null, successMessage = null)
             try {
                 val product = apiService.createProduct(request)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    successMessage = "Producto creado exitosamente"
+                    successMessage = "Producto creado exitosamente",
+                    error = null
                 )
                 loadProducts()
+            } catch (e: retrofit2.HttpException) {
+                val errorMessage = try {
+                    e.response()?.errorBody()?.string() ?: "Error al crear producto"
+                } catch (ex: Exception) {
+                    "Error al crear producto: ${e.message}"
+                }
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = errorMessage
+                )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Error: ${e.message}"
+                    error = "Error al crear producto: ${e.message ?: "Error desconocido"}"
                 )
             }
         }

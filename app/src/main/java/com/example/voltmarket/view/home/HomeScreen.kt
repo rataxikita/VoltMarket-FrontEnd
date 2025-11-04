@@ -25,6 +25,7 @@ import com.example.voltmarket.controller.ProductViewModel
 import com.example.voltmarket.model.Category
 import com.example.voltmarket.model.Product
 import com.example.voltmarket.network.SharedPrefsManager
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +41,21 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var selectedCategory by remember { mutableStateOf<Long?>(null) }
     var showMenu by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    
+    // Debounce para la búsqueda
+    LaunchedEffect(searchQuery) {
+        if (searchQuery.isNotEmpty()) {
+            kotlinx.coroutines.delay(500) // Esperar 500ms antes de buscar
+            viewModel.searchProducts(searchQuery, selectedCategory)
+        } else if (searchQuery.isEmpty() && selectedCategory == null) {
+            // Si no hay filtros, cargar todos los productos
+            viewModel.loadProducts()
+        } else {
+            // Si hay categoría pero no búsqueda, buscar solo por categoría
+            viewModel.searchProducts("", selectedCategory)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -60,13 +76,6 @@ fun HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onFavoritesClick) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "Favoritos",
-                            tint = Color(0xFFE91E63)
-                        )
-                    }
                     Box {
                         IconButton(onClick = { showMenu = true }) {
                             Icon(
@@ -127,12 +136,54 @@ fun HomeScreen(
                 .padding(paddingValues)
                 .background(Color(0xFFF5F5F5))
         ) {
+            // Barra de búsqueda
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { 
+                        searchQuery = it
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Buscar productos...") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = "Buscar")
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { 
+                                searchQuery = ""
+                                if (selectedCategory == null) {
+                                    viewModel.loadProducts()
+                                } else {
+                                    viewModel.searchProducts("", selectedCategory)
+                                }
+                            }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Limpiar")
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
+            
             if (uiState.categories.isNotEmpty()) {
                 CategoriesBar(
                     categories = uiState.categories,
                     selectedCategory = selectedCategory,
                     onCategoryClick = { categoryId ->
-                        selectedCategory = if (selectedCategory == categoryId) null else categoryId
+                        val newCategory = if (selectedCategory == categoryId) null else categoryId
+                        selectedCategory = newCategory
+                        if (searchQuery.isEmpty() && newCategory == null) {
+                            viewModel.loadProducts()
+                        } else {
+                            viewModel.searchProducts(searchQuery, newCategory)
+                        }
                     }
                 )
             }
@@ -153,17 +204,12 @@ fun HomeScreen(
                     )
                 }
                 else -> {
-                    val filteredProducts = if (selectedCategory != null) {
-                        uiState.products.filter { it.categoryId == selectedCategory }
-                    } else {
-                        uiState.products
-                    }
-
-                    if (filteredProducts.isEmpty()) {
-                        EmptyView(message = "No hay productos disponibles")
+                    if (uiState.products.isEmpty()) {
+                        EmptyView(message = if (searchQuery.isNotEmpty() || selectedCategory != null) 
+                            "No se encontraron productos" else "No hay productos disponibles")
                     } else {
                         ProductsList(
-                            products = filteredProducts,
+                            products = uiState.products,
                             onProductClick = onProductClick,
                             onLikeClick = { productId ->
                                 viewModel.toggleLike(productId)
@@ -350,7 +396,7 @@ fun ProductCard(
                 ) {
                     Column {
                         Text(
-                            text = "$${String.format("%.2f", product.precio)}",
+                            text = product.precioFormateado(),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF6200EE)

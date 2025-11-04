@@ -9,11 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -68,7 +67,11 @@ fun CreateProductScreen(
     }
 
     LaunchedEffect(uiState.successMessage) {
-        if (uiState.successMessage != null) {
+        uiState.successMessage?.let { message ->
+            // Esperar un momento para que el usuario vea el mensaje de éxito
+            kotlinx.coroutines.delay(1500)
+            viewModel.clearSuccessMessage()
+            // Recargar productos en el perfil
             onProductCreated()
         }
     }
@@ -219,7 +222,20 @@ fun CreateProductScreen(
                 onValueChange = { imageUrl = it },
                 label = { Text("URL de imagen") },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("https://ejemplo.com/imagen.jpg o selecciona desde galería") }
+                placeholder = { Text("URL directa de imagen (.jpg, .png, .webp)") },
+                supportingText = {
+                    if (imageUrl.isNotEmpty() && !imageUrl.matches(Regex(".*\\.(jpg|jpeg|png|gif|webp|JPG|JPEG|PNG|GIF|WEBP)(\\?.*)?$"))) {
+                        Text(
+                            text = "⚠️ Usa una URL directa de imagen (debe terminar en .jpg, .png, .webp, etc.)",
+                            color = Color(0xFFFF9800)
+                        )
+                    } else if (imageUrl.isNotEmpty()) {
+                        Text(
+                            text = "✓ URL de imagen válida",
+                            color = Color(0xFF4CAF50)
+                        )
+                    }
+                }
             )
             
             // Botón para seleccionar imagen desde galería
@@ -316,11 +332,59 @@ fun CreateProductScreen(
                         containerColor = Color(0xFFFFEBEE)
                     )
                 ) {
-                    Text(
-                        text = error,
-                        modifier = Modifier.padding(16.dp),
-                        color = Color(0xFFC62828)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = null,
+                            tint = Color(0xFFC62828)
+                        )
+                        Text(
+                            text = error,
+                            color = Color(0xFFC62828),
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(onClick = { viewModel.clearError() }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Cerrar",
+                                tint = Color(0xFFC62828)
+                            )
+                        }
+                    }
+                }
+            }
+
+            uiState.successMessage?.let { message ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFE8F5E9)
                     )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = Color(0xFF4CAF50)
+                        )
+                        Text(
+                            text = message,
+                            color = Color(0xFF2E7D32),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 

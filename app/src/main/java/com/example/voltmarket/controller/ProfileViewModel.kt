@@ -51,13 +51,17 @@ class ProfileViewModel(
                     emptyList()
                 }
 
-                // TODO: Obtener productos del usuario cuando esté implementado
-                val productsCount = 0
+                // Obtener productos del usuario
+                val products = try {
+                    apiService.getProductsByUser(userId)
+                } catch (e: Exception) {
+                    emptyList()
+                }
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     favoritesCount = favorites.size,
-                    productsCount = productsCount
+                    productsCount = products.size
                 )
 
             } catch (e: Exception) {

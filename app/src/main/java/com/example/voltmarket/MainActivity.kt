@@ -22,9 +22,11 @@ import com.example.voltmarket.network.SharedPrefsManager
 import com.example.voltmarket.ui.theme.VoltMarketTheme
 import com.example.voltmarket.view.auth.LoginScreen
 import com.example.voltmarket.view.auth.RegisterScreen
+import com.example.voltmarket.view.favorites.FavoritesScreen
 import com.example.voltmarket.view.home.HomeScreen
 import com.example.voltmarket.view.product.CreateProductScreen
 import com.example.voltmarket.view.product.ProductDetailScreen
+import com.example.voltmarket.view.profile.MyProductsScreen
 import com.example.voltmarket.view.profile.ProfileScreen
 
 class MainActivity : ComponentActivity() {
@@ -118,7 +120,7 @@ fun VoltMarketApp(sharedPrefsManager: SharedPrefsManager) {
                     navController.navigate(Screen.CreateProduct.route)
                 },
                 onFavoritesClick = {
-                    // TODO: Implementar pantalla de favoritos
+                    navController.navigate(Screen.Favorites.route)
                 },
                 onProfileClick = {
                     navController.navigate(Screen.Profile.route)
@@ -180,6 +182,41 @@ fun VoltMarketApp(sharedPrefsManager: SharedPrefsManager) {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
+                },
+                onMyProductsClick = {
+                    navController.navigate(Screen.MyProducts.route)
+                },
+                onFavoritesClick = {
+                    navController.navigate(Screen.Favorites.route)
+                },
+                onSettingsClick = {
+                    // TODO: Implementar pantalla de configuración
+                }
+            )
+        }
+
+        // Pantalla de Favoritos
+        composable(Screen.Favorites.route) {
+            FavoritesScreen(
+                sharedPrefsManager = sharedPrefsManager,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onProductClick = { productId ->
+                    navController.navigate(Screen.ProductDetail.createRoute(productId))
+                }
+            )
+        }
+
+        // Pantalla Mis Productos
+        composable(Screen.MyProducts.route) {
+            MyProductsScreen(
+                sharedPrefsManager = sharedPrefsManager,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onProductClick = { productId ->
+                    navController.navigate(Screen.ProductDetail.createRoute(productId))
                 }
             )
         }
@@ -196,4 +233,6 @@ sealed class Screen(val route: String) {
     }
     object CreateProduct : Screen("create_product")
     object Profile : Screen("profile")
+    object Favorites : Screen("favorites")
+    object MyProducts : Screen("my_products")
 }

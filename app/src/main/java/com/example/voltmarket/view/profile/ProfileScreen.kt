@@ -23,7 +23,10 @@ fun ProfileScreen(
     sharedPrefsManager: SharedPrefsManager,
     viewModel: ProfileViewModel,
     onBackClick: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onMyProductsClick: () -> Unit = {},
+    onFavoritesClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {}
 ) {
     val nombre = sharedPrefsManager.getNombre() ?: "Usuario"
     val apellido = sharedPrefsManager.getApellido() ?: ""
@@ -151,7 +154,7 @@ fun ProfileScreen(
                     icon = Icons.Default.ShoppingBag,
                     title = "Mis Publicaciones",
                     subtitle = "Ver productos que he publicado",
-                    onClick = { }
+                    onClick = onMyProductsClick
                 )
             }
             
@@ -160,7 +163,7 @@ fun ProfileScreen(
                     icon = Icons.Default.Favorite,
                     title = "Mis Favoritos",
                     subtitle = "Productos que me gustan",
-                    onClick = { }
+                    onClick = onFavoritesClick
                 )
             }
             
@@ -169,7 +172,7 @@ fun ProfileScreen(
                     icon = Icons.Default.Settings,
                     title = "Configuración",
                     subtitle = "Ajustes de la cuenta",
-                    onClick = { }
+                    onClick = onSettingsClick
                 )
             }
             

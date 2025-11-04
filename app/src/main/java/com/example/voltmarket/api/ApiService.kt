@@ -99,7 +99,7 @@ interface ApiService {
      * Obtener productos de un usuario específico
      * GET /api/products/user/{userId}
      */
-    @GET("api/products/user/{userId}")
+    @GET("products/user/{userId}")
     suspend fun getProductsByUser(@Path("userId") userId: Long): List<Product>
 
     // ============================================
