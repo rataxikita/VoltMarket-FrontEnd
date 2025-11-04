@@ -10,10 +10,6 @@ import retrofit2.http.*
  */
 interface ApiService {
 
-    // ============================================
-    // AUTENTICACIÓN
-    // ============================================
-
     /**
      * Login de usuario
      * POST /api/auth/login
@@ -227,33 +223,37 @@ interface ApiService {
     /**
      * Eliminar comentario
      * DELETE /api/comments/{id}
-     * Solo el dueño del comentario puede eliminarlo
      */
     @DELETE("comments/{id}")
     suspend fun deleteComment(@Path("id") commentId: Long): SuccessResponse
 
     // ============================================
     // VALORACIONES
+    // TODO: Funcionalidad para implementar en la próxima versión actualizada
+    // Sistema de valoraciones de usuarios vendedores - Permite a los usuarios valorar a los vendedores después de una compra
     // ============================================
 
     /**
      * Obtener valoraciones de un usuario
      * GET /api/ratings/user/{userId}
+     * TODO: Implementar en la próxima versión actualizada
      */
-    @GET("api/ratings/user/{userId}")
-    suspend fun getUserRatings(@Path("userId") userId: Long): RatingStats
+    // @GET("api/ratings/user/{userId}")
+    // suspend fun getUserRatings(@Path("userId") userId: Long): RatingStats
 
     /**
      * Crear valoración para un usuario
      * POST /api/ratings
+     * TODO: Implementar en la próxima versión actualizada
      */
-    @POST("api/ratings")
-    suspend fun createRating(@Body request: RatingRequest): Rating
+    // @POST("api/ratings")
+    // suspend fun createRating(@Body request: RatingRequest): Rating
 
     /**
      * Verificar si ya valoré a un usuario
      * GET /api/ratings/check/{userId}
+     * TODO: Implementar en la próxima versión actualizada
      */
-    @GET("api/ratings/check/{userId}")
-    suspend fun hasRatedUser(@Path("userId") userId: Long): Map<String, Boolean>
+    // @GET("api/ratings/check/{userId}")
+    // suspend fun hasRatedUser(@Path("userId") userId: Long): Map<String, Boolean>
 }

@@ -15,10 +15,6 @@ data class Product(
     val catId: Long?,
     val catNombre: String?
 ) {
-    /**
-     * Precio formateado con separador de miles
-     * Ejemplo: 189990.0 → "$189,990"
-     */
     fun precioFormateado() = "$${String.format("%,.0f", precio)}"
 
     /**

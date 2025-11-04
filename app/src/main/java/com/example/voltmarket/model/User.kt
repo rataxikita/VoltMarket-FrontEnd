@@ -8,8 +8,9 @@ data class User(
     val apellido: String,
     val avatarUrl: String?,
     val role: String,
-    val createdAt: String?,
-    val updatedAt: String?
+    // TODO: Campos para implementar en la próxima versión actualizada - Auditoría de usuarios (fecha de creación y última actualización)
+    // val createdAt: String?,
+    // val updatedAt: String?
 ) {
     fun fullName() = "$nombre $apellido"
 

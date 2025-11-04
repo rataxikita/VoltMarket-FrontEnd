@@ -6,7 +6,8 @@ data class Favorite(
     val id: Long,
     val userId: Long,
     val productId: Long,
-    val createdAt: String?,
+    // TODO: Campo para implementar en la próxima versión actualizada - Fecha de creación del favorito
+    // val createdAt: String?,
 
     // Producto completo (incluido en algunas respuestas)
     val product: Product? = null
@@ -30,7 +31,8 @@ data class Like(
     val id: Long,
     val userId: Long,
     val productId: Long,
-    val createdAt: String?
+    // TODO: Campo para implementar en la próxima versión actualizada - Fecha de creación del like
+    // val createdAt: String?
 )
 
 /**
@@ -70,14 +72,15 @@ data class Comment(
     val productId: Long,
     val contenido: String,
     val createdAt: String?,
-    val updatedAt: String?,
+    // TODO: Campo para implementar en la próxima versión actualizada - Detectar si un comentario fue editado
+    // val updatedAt: String?,
 
     // Usuario que hizo el comentario (incluido en algunas respuestas)
     val user: User? = null
 ) {
     /**
      * Tiempo relativo del comentario
-     * TODO: Implementar cálculo real de tiempo
+     * TODO: Implementar cálculo real de tiempo relativo (hace 5 minutos, hace 2 horas, etc.)
      */
     fun timeAgo(): String {
         return createdAt ?: "Hace un momento"
@@ -85,8 +88,9 @@ data class Comment(
 
     /**
      * Verifica si el comentario fue editado
+     * TODO: Implementar en la próxima versión actualizada cuando se habilite la edición de comentarios
      */
-    fun wasEdited() = updatedAt != null && updatedAt != createdAt
+    // fun wasEdited() = updatedAt != null && updatedAt != createdAt
 }
 
 /**
@@ -99,11 +103,15 @@ data class CommentRequest(
 
 // ============================================
 // VALORACIONES
+// TODO: Funcionalidad para implementar en la próxima versión actualizada
+// Sistema de valoraciones de usuarios vendedores - Permite a los usuarios valorar a los vendedores (1-5 estrellas)
 // ============================================
 
 /**
  * Valoración de un usuario vendedor
+ * TODO: Implementar en la próxima versión actualizada - Permite a los usuarios valorar a los vendedores después de una compra
  */
+/*
 data class Rating(
     val id: Long,
     val ratedUserId: Long,
@@ -120,19 +128,25 @@ data class Rating(
      */
     fun starsText() = "⭐".repeat(puntuacion)
 }
+*/
 
 /**
  * Request para valorar a un usuario
+ * TODO: Implementar en la próxima versión actualizada
  */
+/*
 data class RatingRequest(
     val ratedUserId: Long,
     val puntuacion: Int, // 1-5
     val comentario: String?
 )
+*/
 
 /**
  * Estadísticas de valoraciones de un usuario
+ * TODO: Implementar en la próxima versión actualizada - Muestra promedio, total de valoraciones y lista completa
  */
+/*
 data class RatingStats(
     val userId: Long,
     val averageRating: Double,
@@ -164,3 +178,4 @@ data class RatingStats(
         else -> "$totalRatings valoraciones"
     }
 }
+*/

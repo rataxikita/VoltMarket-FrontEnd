@@ -13,7 +13,7 @@ object RetrofitProvider {
     private const val EMULATOR_IP = "10.0.2.2"
 
     // cmd / ipconfig / ipv4
-    private const val PHYSICAL_IP = "192.168.100.107"
+    private const val PHYSICAL_IP = "192.168.100.24"
 
     private val BASE_URL = if (USE_EMULATOR) {
         "http://$EMULATOR_IP:8080/api/"
@@ -59,10 +59,6 @@ object RetrofitProvider {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    /**
-     * Crea una instancia de la interfaz de servicio
-     * Uso: val api = RetrofitProvider.create(ApiService::class.java)
-     */
     fun <T> create(serviceClass: Class<T>): T {
         return retrofit.create(serviceClass)
     }
