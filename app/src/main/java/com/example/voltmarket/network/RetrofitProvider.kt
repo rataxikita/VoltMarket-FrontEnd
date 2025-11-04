@@ -11,7 +11,9 @@ object RetrofitProvider {
 
     private const val USE_EMULATOR = true
     private const val EMULATOR_IP = "10.0.2.2"
-    private const val PHYSICAL_IP = "192.168.100.24"
+
+    // cmd / ipconfig / ipv4
+    private const val PHYSICAL_IP = "192.168.100.107"
 
     private val BASE_URL = if (USE_EMULATOR) {
         "http://$EMULATOR_IP:8080/api/"
